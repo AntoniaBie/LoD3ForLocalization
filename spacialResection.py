@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jun  6 08:59:17 2023
+Created on Tue Jul 11 15:54:07 2023
 
 @author: anton
 """
@@ -9,71 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 import mpmath
-
-data = np.genfromtxt("data/passpunktliste.txt")
-#data = data[:,1:4]
-X18 = np.array([data[0, 1],
-                data[1, 1],
-                data[2, 1],
-                data[3, 1],
-                data[4, 1],
-                data[5, 1],
-                data[6, 1],
-                data[7, 1],
-                data[8, 1],
-                data[9, 1],
-                data[11, 1],
-                data[12, 1],
-                data[14, 1],
-                data[15, 1],
-                data[17, 1],
-                data[18, 1],
-                data[20, 1],
-                data[21, 1]])
-
-Y18 = np.array([data[0, 2],
-                data[1, 2],
-                data[2, 2],
-                data[3, 2],
-                data[4, 2],
-                data[5, 2],
-                data[6, 2],
-                data[7, 2],
-                data[8, 2],
-                data[9, 2],
-                data[11, 2],
-                data[12, 2],
-                data[14, 2],
-                data[15, 2],
-                data[17, 2],
-                data[18, 2],
-                data[20, 2],
-                data[21, 2]])
-
-Z18 = np.array([data[0, 3],
-                data[1, 3],
-                data[2, 3],
-                data[3, 3],
-                data[4, 3],
-                data[5, 3],
-                data[6, 3],
-                data[7, 3],
-                data[8, 3],
-                data[9, 3],
-                data[11, 3],
-                data[12, 3],
-                data[14, 3],
-                data[15, 3],
-                data[17, 3],
-                data[18, 3],
-                data[20, 3],
-                data[21, 3]])
-
-x_coord = [2293, 2289, 2291, 2853, 2885, 2917, 3345, 3395, 3461, 3767, 3865, 4153, 4289, 4501, 4657, 4807, 4985, 5087]
-y_coord = [757, 1411, 2247, 871, 1491, 2269, 959, 1559, 2289, 1053, 2303, 1135, 2309, 1207, 2325, 1277, 2335, 1343]
-#X18 = X18[:,np.newaxis]
-#Y18 = Y18[:,np.newaxis]
-#Z18 = Z18[:,np.newaxis]
 
 def rotmat_AR(omega, phi, kappa):
     r11 = np.cos(phi) * np.cos(kappa)
@@ -204,31 +139,35 @@ def DLT(X, Y, Z, x, y):
     
     return X0, R, x0, y0, om, phi, kap
 
-
-def main(X18,Y18,Z18,x_coord,y_coord):
-    pixelgroesse = 4.52 * 1e-3
-    bildgroesse_x = 5168
-    bildgroesse_y = 3448
+def main(image_coords,real_coords,cam):
     
-    pixelkoord_pp18 = np.column_stack((np.arange(0, 10).tolist() + [12, 13, 15, 16, 18, 19, 21, 22], x_coord, y_coord))
-    bildkoord_pp18 = np.copy(pixelkoord_pp18.astype(np.float32))
-    bildkoord_pp18[:, 1] = ((bildkoord_pp18[:, 1] - bildgroesse_x / 2 - 1) * pixelgroesse + pixelgroesse / 2) * 7952 / 5168
-    bildkoord_pp18[:, 2] = ((-bildkoord_pp18[:, 2] + bildgroesse_y / 2 - 1) * pixelgroesse + pixelgroesse / 2) * 7952 / 5168
+    X_real = real_coords[:,0]
+    Y_real = real_coords[:,1]
+    Z_real = real_coords[:,2]
+    
+    pixel_m = cam[9]
+    width = cam[1]
+    height = cam[2]
+    
+    pixelcoords = np.column_stack((np.arange(0, len(image_coords)).tolist(),image_coords[:,0],image_coords[:,1]))
+    image_coords_m = np.copy(pixelcoords.astype(np.float32))
+    image_coords_m[:, 1] = ((image_coords_m[:, 1] - width / 2 - 1) * pixel_m + pixel_m / 2) * 7952 / width
+    image_coords_m[:, 2] = ((-image_coords_m[:, 2] + height / 2 - 1) * pixel_m + pixel_m / 2) * 7952 / width
     
     # Plot zur Kontrolle der umgerechneten Bildkoordinaten der Passpunkte
     
-    plt.plot(bildkoord_pp18[:, 1], bildkoord_pp18[:, 2], 'rx')
-    plt.title("Bildkoordinaten der Passpunkte")
-    for i in range(len(pixelkoord_pp18)):
-        plt.text(bildkoord_pp18[i, 1], bildkoord_pp18[i, 2], str(pixelkoord_pp18[i, 0]))
+    #plt.plot(image_coords_m[:, 1], image_coords_m[:, 2], 'rx')
+    #plt.title("Bildkoordinaten der Passpunkte")
+    #for i in range(len(pixelcoords)):
+    #    plt.text(image_coords_m[i, 1], image_coords_m[i, 2], str(pixelcoords[i, 0]))
     
-    A1 = -0.0648 * pixelgroesse
-    A2 = 0.0720 * pixelgroesse
-    B1 = 3.9245e-05 * pixelgroesse
-    B2 = 0.0015 * pixelgroesse
+    A1 = -0.0648 * pixel_m
+    A2 = 0.0720 * pixel_m
+    B1 = 3.9245e-05 * pixel_m
+    B2 = 0.0015 * pixel_m
     
     # Näherungswerte bestimmen
-    X0, R, x0, y0, om, phi, kap = DLT(X18, Y18, Z18, bildkoord_pp18[:, 1], bildkoord_pp18[:, 2])
+    X0, R, x0, y0, om, phi, kap = DLT(X_real, Y_real, Z_real, image_coords_m[:, 1], image_coords_m[:, 2])
     
     x_o = np.zeros((6, 1))
     x_o[0] = X0[0]
@@ -240,9 +179,9 @@ def main(X18,Y18,Z18,x_coord,y_coord):
     
     verzeichnung = False
     
-    b = np.reshape(bildkoord_pp18[:, 1:], (-1, 1))  # Struktur [x1;y1;xn;yn]
+    b = np.reshape(image_coords_m[:, 1:], (-1, 1))  # Struktur [x1;y1;xn;yn]
     
-    c = 5.3701e+03 * pixelgroesse
+    c = cam[0] * pixel_m
     
     n = len(b)
     u = 6
@@ -267,9 +206,9 @@ def main(X18,Y18,Z18,x_coord,y_coord):
         R = R.reshape(3,3)
         #print(R.shape)
             
-        Zx = R[0, 0] * (X18 - x_o[0]) + R[1, 0] * (Y18 - x_o[1]) + R[2, 0] * (Z18 - x_o[2])
-        Zy = R[0, 1] * (X18 - x_o[0]) + R[1, 1] * (Y18 - x_o[1]) + R[2, 1] * (Z18 - x_o[2])
-        N = R[0, 2] * (X18 - x_o[0]) + R[1, 2] * (Y18 - x_o[1]) + R[2, 2] * (Z18 - x_o[2])
+        Zx = R[0, 0] * (X_real - x_o[0]) + R[1, 0] * (Y_real - x_o[1]) + R[2, 0] * (Z_real - x_o[2])
+        Zy = R[0, 1] * (X_real - x_o[0]) + R[1, 1] * (Y_real - x_o[1]) + R[2, 1] * (Z_real - x_o[2])
+        N = R[0, 2] * (X_real - x_o[0]) + R[1, 2] * (Y_real - x_o[1]) + R[2, 2] * (Z_real - x_o[2])
         #Zx = Zx[:,np.newaxis]
         #Zy = Zy[:,np.newaxis]
         #N = N[:,np.newaxis]
@@ -284,21 +223,21 @@ def main(X18,Y18,Z18,x_coord,y_coord):
         A[::2, 0] = -c / N ** 2 * (R[0, 2] * Zx - R[0, 0] * N)
         A[::2, 1] = -c / N ** 2 * (R[1, 2] * Zx - R[1, 0] * N)
         A[::2, 2] = -c / N ** 2 * (R[2, 2] * Zx - R[2, 0] * N)
-        A[::2, 3] = -c / N * (Zx / N * (R[2, 2] * (Y18 - x_o[1]) - R[1, 2] * (Z18 - x_o[2])) - R[2, 0] * (Y18 - x_o[1]) + R[1, 0] * (Z18 - x_o[2]))
+        A[::2, 3] = -c / N * (Zx / N * (R[2, 2] * (Y_real - x_o[1]) - R[1, 2] * (Z_real - x_o[2])) - R[2, 0] * (Y_real - x_o[1]) + R[1, 0] * (Z_real - x_o[2]))
         A[::2, 4] = c / N * (Zx / N * (Zx * np.cos(x_o[5]) - Zy * np.sin(x_o[5])) + N * np.cos(x_o[5]))
         A[::2, 5] = -c / N * Zy
         
         A[1::2, 0] = -c / N ** 2 * (R[0, 2] * Zy - R[0, 1] * N)
         A[1::2, 1] = -c / N ** 2 * (R[1, 2] * Zy - R[1, 1] * N)
         A[1::2, 2] = -c / N ** 2 * (R[2, 2] * Zy - R[2, 1] * N)
-        A[1::2, 3] = -c / N * (Zy / N * (R[2, 2] * (Y18 - x_o[1]) - R[1, 2] * (Z18 - x_o[2])) - R[2, 1] * (Y18 - x_o[1]) + R[1, 1] * (Z18 - x_o[2]))
+        A[1::2, 3] = -c / N * (Zy / N * (R[2, 2] * (Y_real - x_o[1]) - R[1, 2] * (Z_real - x_o[2])) - R[2, 1] * (Y_real - x_o[1]) + R[1, 1] * (Z_real - x_o[2]))
         A[1::2, 4] = c / N * (Zx / N * (Zx * np.cos(x_o[5]) - Zy * np.sin(x_o[5])) + N * np.cos(x_o[5]))
         A[1::2, 5] = -c / N * Zy
         
         A[1::2, 0] = -c / N ** 2 * (R[0, 2] * Zy - R[0, 1] * N)
         A[1::2, 1] = -c / N ** 2 * (R[1, 2] * Zy - R[1, 1] * N)
         A[1::2, 2] = -c / N ** 2 * (R[2, 2] * Zy - R[2, 1] * N)
-        A[1::2, 3] = -c / N * (Zy / N * (R[2, 2] * (Y18 - x_o[1]) - R[1, 2] * (Z18 - x_o[2])) - R[2, 1] * (Y18 - x_o[1]) + R[1, 1] * (Z18 - x_o[2]))
+        A[1::2, 3] = -c / N * (Zy / N * (R[2, 2] * (Y_real - x_o[1]) - R[1, 2] * (Z_real - x_o[2])) - R[2, 1] * (Y_real - x_o[1]) + R[1, 1] * (Z_real - x_o[2]))
         A[1::2, 4] = c / N * (Zy / N * (Zx * np.cos(x_o[5]) - Zy * np.sin(x_o[5])) - N * np.sin(x_o[5]))
         A[1::2, 5] = c / N * Zx
         
@@ -313,9 +252,9 @@ def main(X18,Y18,Z18,x_coord,y_coord):
         b_dach = b + v_dach
         
         R = rotmat_AR(x_dach[3], x_dach[4], x_dach[5])
-        Zx = R[0, 0] * (X18 - x_dach[0]) + R[1, 0] * (Y18 - x_dach[1]) + R[2, 0] * (Z18 - x_dach[2])
-        Zy = R[0, 1] * (X18 - x_dach[0]) + R[1, 1] * (Y18 - x_dach[1]) + R[2, 1] * (Z18 - x_dach[2])
-        N = R[0, 2] * (X18 - x_dach[0]) + R[1, 2] * (Y18 - x_dach[1]) + R[2, 2] * (Z18 - x_dach[2])
+        Zx = R[0, 0] * (X_real - x_dach[0]) + R[1, 0] * (Y_real - x_dach[1]) + R[2, 0] * (Z_real - x_dach[2])
+        Zy = R[0, 1] * (X_real - x_dach[0]) + R[1, 1] * (Y_real - x_dach[1]) + R[2, 1] * (Z_real - x_dach[2])
+        N = R[0, 2] * (X_real - x_dach[0]) + R[1, 2] * (Y_real - x_dach[1]) + R[2, 2] * (Z_real - x_dach[2])
         
         b_dach_x = b_dach[::2]
         b_dach_y = b_dach[1::2]
@@ -355,13 +294,11 @@ def main(X18,Y18,Z18,x_coord,y_coord):
     red = np.diag(R_r)
     r_test = np.sum(red)
     
-    plt.figure()
-    plt.plot(xs, ys, 'rx')
-    plt.title("Bildkoordinaten der Passpunkte nach der Ausgleichung")
-    for i in range(len(pixelkoord_pp18)):
-        plt.text(xs[i], ys[i], str(pixelkoord_pp18[i, 0]))
-    
-    plt.show()
-    
-    
-main(X18,Y18,Z18,x_coord,y_coord)
+    #plt.figure()
+    #plt.plot(xs, ys, 'rx')
+    #plt.title("Bildkoordinaten der Passpunkte nach der Ausgleichung")
+    #for i in range(len(pixelcoords)):
+    #    plt.text(xs[i], ys[i], str(pixelcoords[i, 0]))
+   # 
+   # plt.show()
+    return np.asarray([x_o[0],x_o[1],x_o[2]])

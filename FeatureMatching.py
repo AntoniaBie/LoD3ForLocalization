@@ -27,7 +27,7 @@ def get_coordinates(im1,im2,i):
         if m.distance < 0.85 * n.distance:
             good_matches.append(m)
             
-    print("Number of good matches in one single image: ", len(good_matches))
+    print("Number of good matches: ", len(good_matches))
     koord_pic1 = np.array([0,0])  
     koord_pic2 = np.array([0,0]) 
             

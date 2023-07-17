@@ -40,7 +40,10 @@ def main(ans,mesh,koord_LoD):
     vertices_2 = np.asarray(vertices_2)
     vertices_3 = np.asarray(vertices_3)
     vertices = np.concatenate((np.array([vertices_1]).T,np.array([vertices_2]).T,np.array([vertices_3]).T),axis=1)
-
+    coords = np.asarray(coords)
+    
+    bary_coords = ans['primitive_uvs'].numpy()
     print(int(n),"points are in the background and therefore not usable.")
     print(int(len(koord_LoD)-n), "points are on the LoD-model and therefore usable.")
+    #print(np.shape(coords))
     return coords

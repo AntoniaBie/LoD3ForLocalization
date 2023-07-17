@@ -25,6 +25,7 @@ def main(camera,coord_LoD,coord_real):
     
     path = './images_matchCoords/image1_LoD.jpeg'
     matplotlib.image.imsave(path, virt_pic1)
+    #plt.imshow(virt_pic1)
     
     # extract the second virtual feature-image (reality)
     virt_pic2 = np.array(np.zeros((height,width)), dtype=np.uint8)
@@ -40,8 +41,8 @@ def main(camera,coord_LoD,coord_real):
     
     # Match features again on the feature-images
     
-    path1 = r'E:/Bachelorthesis/Python/images_matchCoords/image1_LoD.jpeg'
-    path2 = r'E:/Bachelorthesis/Python/images_matchCoords/image2_real.jpeg'
+    path1 = r'./images_matchCoords/image1_LoD.jpeg'
+    path2 = r'./images_matchCoords/image2_real.jpeg'
     image1 = cv2.imread(path1)
     image2 = cv2.imread(path2)
      
