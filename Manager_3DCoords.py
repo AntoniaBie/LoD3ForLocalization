@@ -13,8 +13,10 @@ import matchCoords
 import spacialResection
 #import ausgleichung
 
-def main(cam,mesh,image_folder_real,image_folder_LoD,ans,i):
-    traj_points = []
+def main(cam,mesh,image_folder_real,image_folder_LoD,ans,traj_points,i):
+    traj_points_x = []
+    traj_points_y = []
+    traj_points_z = []
     # iterate through all (real and virtual) images and extract coords
     
     # extract LoD-model image coordinates
@@ -44,13 +46,23 @@ def main(cam,mesh,image_folder_real,image_folder_LoD,ans,i):
         coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
             
         # extract the 3D coordinates for the features which are matched between real world and LoD-model
-        coord1_LoD_3D = extractCoords.main(ans, mesh, coord1_LoD_2D_selection)
+        coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
         
         # currently [1::3,:] because of approx to test if spacial resection works
-        camera_pos = spacialResection.main(coord1_real_2D_selection,coord1_LoD_3D[1::3,:],cam)
+        camera_pos = spacialResection.main(coord1_real_2D_selection,coord1_LoD_3D,cam)
       
-    traj_points.append(camera_pos)
+    traj_points_x.append(camera_pos[0])
+    traj_points_y.append(camera_pos[1])
+    traj_points_z.append(camera_pos[2])
     
-    traj_points = np.asarray(traj_points)
+    traj_points_x = np.asarray([traj_points_x]).T
+    traj_points_y = np.asarray([traj_points_y]).T
+    traj_points_z = np.asarray([traj_points_z]).T
     
-    return traj_points
+    traj = np.concatenate((traj_points_x,traj_points_y,traj_points_z),axis=0)
+    traj = np.squeeze(traj)
+    traj = traj[:,np.newaxis]
+    
+    traj = np.concatenate((traj_points,traj),axis = 1)
+    
+    return traj

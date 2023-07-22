@@ -27,11 +27,16 @@ LoD2_mesh = o3d.io.read_triangle_mesh("./data/Mesh/TriangleMesh_LoD2.ply", enabl
 LoD3_mesh = o3d.io.read_triangle_mesh("./data/Mesh/TriangleMesh_LoD3.ply", enable_post_processing=False, print_progress=True)
 LoD2_obj = o3d.io.read_triangle_mesh("./data/Mesh/LoD2.obj", enable_post_processing=False, print_progress=True)
 LoD3_obj = o3d.io.read_triangle_mesh("./data/Mesh/LoD3.obj", enable_post_processing=False, print_progress=True)
+combi = o3d.io.read_triangle_mesh("./data/Mesh/combi2.obj", enable_post_processing=False, print_progress=True)
 
 #ImageFolder = "E:/Bachelorthesis/10_TUM_building34"
 ImageFolder = "E:/Bachelorthesis/9_TUM_Arcisstr"
 ImageFolder = "E:/Bachelorthesis/9_TUM_Arcisstr_seg/9_TUM_Arcisstr_seg_TUM"
+
+
 chosenMethod = method[0]
+curr_model = LoD2_obj
+
 #%% data preparation
 pixel_M = 3.4500e-6
 c_9 = 0.0082198514/pixel_M
@@ -44,25 +49,45 @@ dz_9 = 0.1080
 roll = -101.2307
 pitch = -0.0849
 yaw = 85.3330
+#vector, viewpoint cam:
+viewpoint_cam = np.array([0.980114,0.072404,0.184753])
 camera = [c_9,width,height,dx_9,dy_9,dz_9,roll,pitch,yaw,pixel_M]
 GNSS = DataPrep.data_prep(GNSS, camera)
 
-curr_model = LoD2_obj
+#%% Visualization
+def visualize(mesh):
+        vis = o3d.visualization.Visualizer()
+        vis.create_window()
+        vis.add_geometry(mesh)
+        vis.run()
+        vis.destroy_window()
+        
+#visualize(curr_model) #for .obj
 
 #%% Ray Casting and Coordinate Calculation
-for i in range(0,1):
-    ans,mesh,path = RC.raycasting(camera,curr_model,ImageFolder,GNSS,i)
+points_traj = np.array([0,0,0])
+points_traj = points_traj[:,np.newaxis]
+for i in range(0,3):
+    ans,mesh,path = RC.raycasting(camera,curr_model,ImageFolder,GNSS,viewpoint_cam,i)
 
     # Get coords and calculate camera position
-    points_traj = Manager_3DCoords.main(camera, mesh, ImageFolder, path, ans,i)
+    points_traj = Manager_3DCoords.main(camera,mesh,ImageFolder,path,ans,points_traj,i)
 
 #%% Test spacial resection
 #point = spacialResection.main(a,b[1::3,:],c)
+points_traj = points_traj.T
+points_traj = points_traj[1:,:]
 fig = plt.figure("Trajectory")
 ax = fig.add_subplot(projection='3d')
 ax.scatter(GNSS[:,0],GNSS[:,1],GNSS[:,2])
 ax.scatter(GNSS[0,0],GNSS[0,1],GNSS[0,2],c='g',marker='o')
-ax.scatter(points_traj[:,0],points_traj[:,1],points_traj[:,2],c='r', marker='o')
+ax.scatter(points_traj[0:,0],points_traj[0:,1],points_traj[0:,2],c='r', marker='o')
+
+GNSS_m = np.sqrt(np.power((GNSS[0,0]-points_traj[:,0]),2) + np.power((GNSS[0,1]-points_traj[:,1]),2) + np.power((GNSS[0,2]-points_traj[:,2]),2))
+
+print('current max deviation: ' + str(round(np.amax(GNSS_m),4)) + 'm')
+print('current min deviation: ' + str(round(np.amin(GNSS_m),4)) + 'm')
+    
 
 #%% Test roll, pitch, yaw
 GNSS1 = GNSS[0,:]
@@ -126,10 +151,21 @@ R = np.matmul(R,Rx)
 
 X_test1 = GNSS2-GNSS1 + np.matmul(R,GNSS2)
 
+#%% Test for combining LoD2 and LoD3 after raycasting
+#import cv2
+
+#pic1 = cv2.imread('./images/image13.jpeg')
+
+#pic2 = cv2.imread('./images/image14.jpeg')
+
+#pic3 = pic1 + pic2
+
+#plt.imshow(pic3)
+
 #%% Test for image-pairs of the same type
 #print("__________________________________________")
 #print("Now image matching between two images")
 #k1 = FeatureMatching.get_coordinates("E:\Bachelorthesis\Python\LoD3ForLocalization\images\image13.jpeg","E:\Bachelorthesis\Python\LoD3ForLocalization\images\image13.jpeg",11)
 #k3 = FeatureMatching.get_coordinates("E:/Bachelorthesis/9_TUM_Arcisstr/307t_2021_031121_296895_752_9.jpg","E:/Bachelorthesis/9_TUM_Arcisstr/307t_2021_031121_296896_251_9.jpg",12)
 #k2 = FeatureMatching.get_coordinates("E:\Bachelorthesis\Python\LoD3ForLocalization\images\image13.jpeg","E:/Bachelorthesis/9_TUM_Arcisstr/307t_2021_031121_296896_251_9.jpg",13)
-k4 = FeatureMatching.get_coordinates("E:\Bachelorthesis\Python\images\image20.jpeg","E:\Bachelorthesis\9_TUM_Arcisstr_seg\9_TUM_Arcisstr_seg_TUM\image1.png",20)
+#k4 = FeatureMatching.get_coordinates("E:\Bachelorthesis\Python\images\image20.jpeg","E:\Bachelorthesis\9_TUM_Arcisstr_seg\9_TUM_Arcisstr_seg_TUM\image1.png",20)

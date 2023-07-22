@@ -17,16 +17,8 @@ from os import listdir
 import time
 import math
 
-def raycasting(cam,rec_mesh,image_folder,GNSS,i):
+def raycasting(cam,rec_mesh,image_folder,GNSS,viewpoint_cam,i):
     
-    def visualize(mesh):
-        vis = o3d.visualization.Visualizer()
-        vis.create_window()
-        vis.add_geometry(mesh)
-        vis.run()
-        vis.destroy_window()
-        
-    #visualize(rec_mesh) #for .obj
     #o3d.visualization.draw_geometries([pcd, rec_mesh]) #for .ply
     #print(rec_mesh)
     #print('Vertices:')
@@ -57,8 +49,13 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,i):
     # test with dy
     GNSS_m = math.sqrt(pow((GNSS[i,0]-GNSS[i+1,0]),2) + pow((GNSS[i,1]-GNSS[i+1,1]),2) + pow((GNSS[i,2]-GNSS[i+1,2]),2))
     GNSS_dz = cam[7]*GNSS_m*math.pi/180
-    print('pitch: ' + str(GNSS_dz))
-    GNSS_dy = cam[8]*GNSS_m
+    vp = viewpoint_cam*GNSS_m
+    print(vp)
+    print(GNSS[i,:] + vp)
+    vp = GNSS[i,:] + vp
+    print(vp)
+    #print('pitch: ' + str(GNSS_dz))
+    #GNSS_dy = cam[8]*GNSS_m
         
     # test with helmert transformation
     '''GNSS1 = GNSS[i,:]
@@ -109,6 +106,8 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,i):
         # Calculation of pitch for the viewpoint
         center=[GNSS[i+1,0],GNSS[i+1,1],GNSS[i+1,2]+GNSS_dz], #Punkt, auf den man schaut
         #center=[X[0],X[1],X[2]],
+        #center=[vp[0],vp[1],vp[2]],
+        #center=[GNSS[i+1,0]+vp[0],GNSS[i+1,1]+vp[1],GNSS[i+1,2]+vp[2]],
         eye=[GNSS[i,0],GNSS[i,1],GNSS[i,2]], #Kameraposition
         up=[0, 0, -360], #Rotation
         width_px=width,

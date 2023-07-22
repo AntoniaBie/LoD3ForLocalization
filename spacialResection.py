@@ -301,4 +301,5 @@ def main(image_coords,real_coords,cam):
     #    plt.text(xs[i], ys[i], str(pixelcoords[i, 0]))
    # 
    # plt.show()
+    print('Iteration: ' + str(iter))
     return np.asarray([x_o[0],x_o[1],x_o[2]])
