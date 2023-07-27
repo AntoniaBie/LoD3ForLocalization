@@ -32,19 +32,27 @@ combi = o3d.io.read_triangle_mesh("./data/Mesh/combi2.obj", enable_post_processi
 LoD2_textured_23 = o3d.io.read_triangle_mesh(r"C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\building_23.obj",print_progress=True)
 LoD2u3 = o3d.io.read_triangle_mesh("./data/Mesh/LoD2u3.obj", enable_post_processing=False, print_progress=True)
 LoD3_70 = o3d.io.read_triangle_mesh(r"C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\building_70.obj",print_progress=True)
-
+LoD3_72 = o3d.io.read_triangle_mesh(r"C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\building_72.obj",print_progress=True)
+LoD3_21 = o3d.io.read_triangle_mesh(r"C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\building_21.obj",print_progress=True)
+TUM_LoD2 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD2.obj", enable_post_processing=False, print_progress=True)
+TUM_LoD3 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD3.obj", enable_post_processing=False, print_progress=True)
 #ImageFolder = "E:/Bachelorthesis/10_TUM_building34"
 
+#11m deviation, iteration:11
+#chosenMethod = method[0]
+#chosenImageType = image_type[1]
+#ImageFolder = "E:/Bachelorthesis/9_Route3_seg" #weiter unten eintragen
+#curr_model = LoD3_70 
 
 chosenMethod = method[0]
-chosenImageType = image_type[1]
-curr_model = LoD2_obj
+chosenImageType = image_type[0]
+curr_model = TUM_LoD3
 
 if chosenImageType == 'segmentation':
-    ImageFolder = "E:/Bachelorthesis/9_TUM_Arcisstr_seg/9_TUM_Arcisstr_seg_TUM"
+    ImageFolder = "E:/Bachelorthesis/9_Route3_seg"
     
 elif chosenImageType == 'corresponding image-pairs':
-    ImageFolder = "E:/Bachelorthesis/9_TUM_Arcisstr"
+    ImageFolder = "E:/Bachelorthesis/9_Route3"
     
 else:
     print('Please select the image type to get the images from the right folder.')
@@ -74,16 +82,16 @@ def visualize(mesh):
         vis.run()
         vis.destroy_window()
         
-visualize(curr_model) #for .obj
+#visualize(curr_model) #for .obj
 
 #%% Ray Casting and Coordinate Calculation
 points_traj = np.array([0,0,0])
 points_traj = points_traj[:,np.newaxis]
-for i in range(20,21):
-    ans,mesh,path = RC.raycasting(camera,curr_model,ImageFolder,GNSS,viewpoint_cam,i)
+for img in range(0,3):
+    ans,mesh,path = RC.raycasting(camera,curr_model,ImageFolder,GNSS,viewpoint_cam,img)
 
     # Get coords and calculate camera position
-    points_traj = Manager_3DCoords.main(camera,GNSS,mesh,ImageFolder,path,ans,points_traj,chosenMethod,i)
+    points_traj = Manager_3DCoords.main(camera,GNSS,mesh,ImageFolder,path,ans,points_traj,chosenMethod,img)
 
 #%% Test spacial resection
 #point = spacialResection.main(a,b[1::3,:],c)
@@ -92,10 +100,10 @@ points_traj = points_traj[1:,:]
 fig = plt.figure("Trajectory")
 ax = fig.add_subplot(projection='3d')
 ax.scatter(GNSS[:,0],GNSS[:,1],GNSS[:,2])
-ax.scatter(GNSS[0,0],GNSS[0,1],GNSS[0,2],c='g',marker='o')
-ax.scatter(points_traj[0:,0],points_traj[0:,1],points_traj[0:,2],c='r', marker='o')
+ax.scatter(GNSS[img,0],GNSS[img,1],GNSS[img,2],c='g',marker='o')
+ax.scatter(points_traj[:,0],points_traj[:,1],points_traj[:,2],c='r', marker='o')
 
-GNSS_m = np.sqrt(np.power((GNSS[0:len(points_traj),0]-points_traj[:,0]),2) + np.power((GNSS[0:len(points_traj),1]-points_traj[:,1]),2) + np.power((GNSS[0:len(points_traj),2]-points_traj[:,2]),2))
+GNSS_m = np.sqrt(np.power((GNSS[img:img+len(points_traj),0]-points_traj[:,0]),2) + np.power((GNSS[img:img+len(points_traj),1]-points_traj[:,1]),2) + np.power((GNSS[img:img+len(points_traj),2]-points_traj[:,2]),2))
 
 print('current max deviation: ' + str(round(np.amax(GNSS_m),4)) + 'm')
 print('current min deviation: ' + str(round(np.amin(GNSS_m),4)) + 'm')
