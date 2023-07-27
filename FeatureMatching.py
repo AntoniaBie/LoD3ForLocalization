@@ -52,4 +52,4 @@ def get_coordinates(im1,im2,i):
     plt.legend(["matched points 1", "matched points 2"])
     plt.title("ORB")
     plt.show()
-    return koord_pic1
+    return koord_pic1,koord_pic2

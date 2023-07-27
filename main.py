@@ -17,10 +17,11 @@ import matplotlib.pyplot as plt
 import math
 
 #%% setting that are obligatory for usage!
-method = ['corresponding image-pairs','feature images','segmentation']
+method = ['feature images','sobel']
+image_type = ['corresponding image-pairs','segmentation']
 
 #%% setting to be changed by the user
-GNSS = np.loadtxt("./data/GNSS/GNSS_cam9_TUM_Arcisstr.txt")
+GNSS = np.loadtxt("./data/GNSS/9_Route3.txt")
 LoD2 = o3d.io.read_point_cloud(r"C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\xyz\LOD2_koord_neu_xyz/LOD2_selection.xyz")
 LoD3 = o3d.io.read_point_cloud(r"C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\xyz\LOD3_xyz\LOD3_selection.xyz")
 LoD2_mesh = o3d.io.read_triangle_mesh("./data/Mesh/TriangleMesh_LoD2.ply", enable_post_processing=False, print_progress=True)
@@ -28,14 +29,25 @@ LoD3_mesh = o3d.io.read_triangle_mesh("./data/Mesh/TriangleMesh_LoD3.ply", enabl
 LoD2_obj = o3d.io.read_triangle_mesh("./data/Mesh/LoD2.obj", enable_post_processing=False, print_progress=True)
 LoD3_obj = o3d.io.read_triangle_mesh("./data/Mesh/LoD3.obj", enable_post_processing=False, print_progress=True)
 combi = o3d.io.read_triangle_mesh("./data/Mesh/combi2.obj", enable_post_processing=False, print_progress=True)
+LoD2_textured_23 = o3d.io.read_triangle_mesh(r"C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\building_23.obj",print_progress=True)
+LoD2u3 = o3d.io.read_triangle_mesh("./data/Mesh/LoD2u3.obj", enable_post_processing=False, print_progress=True)
+LoD3_70 = o3d.io.read_triangle_mesh(r"C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\building_70.obj",print_progress=True)
 
 #ImageFolder = "E:/Bachelorthesis/10_TUM_building34"
-ImageFolder = "E:/Bachelorthesis/9_TUM_Arcisstr"
-ImageFolder = "E:/Bachelorthesis/9_TUM_Arcisstr_seg/9_TUM_Arcisstr_seg_TUM"
 
 
 chosenMethod = method[0]
+chosenImageType = image_type[1]
 curr_model = LoD2_obj
+
+if chosenImageType == 'segmentation':
+    ImageFolder = "E:/Bachelorthesis/9_TUM_Arcisstr_seg/9_TUM_Arcisstr_seg_TUM"
+    
+elif chosenImageType == 'corresponding image-pairs':
+    ImageFolder = "E:/Bachelorthesis/9_TUM_Arcisstr"
+    
+else:
+    print('Please select the image type to get the images from the right folder.')
 
 #%% data preparation
 pixel_M = 3.4500e-6
@@ -50,7 +62,7 @@ roll = -101.2307
 pitch = -0.0849
 yaw = 85.3330
 #vector, viewpoint cam:
-viewpoint_cam = np.array([0.980114,0.072404,0.184753])
+viewpoint_cam = np.array([0.416341,0.890226,-0.184817])
 camera = [c_9,width,height,dx_9,dy_9,dz_9,roll,pitch,yaw,pixel_M]
 GNSS = DataPrep.data_prep(GNSS, camera)
 
@@ -62,16 +74,16 @@ def visualize(mesh):
         vis.run()
         vis.destroy_window()
         
-#visualize(curr_model) #for .obj
+visualize(curr_model) #for .obj
 
 #%% Ray Casting and Coordinate Calculation
 points_traj = np.array([0,0,0])
 points_traj = points_traj[:,np.newaxis]
-for i in range(0,3):
+for i in range(20,21):
     ans,mesh,path = RC.raycasting(camera,curr_model,ImageFolder,GNSS,viewpoint_cam,i)
 
     # Get coords and calculate camera position
-    points_traj = Manager_3DCoords.main(camera,mesh,ImageFolder,path,ans,points_traj,i)
+    points_traj = Manager_3DCoords.main(camera,GNSS,mesh,ImageFolder,path,ans,points_traj,chosenMethod,i)
 
 #%% Test spacial resection
 #point = spacialResection.main(a,b[1::3,:],c)
@@ -83,7 +95,7 @@ ax.scatter(GNSS[:,0],GNSS[:,1],GNSS[:,2])
 ax.scatter(GNSS[0,0],GNSS[0,1],GNSS[0,2],c='g',marker='o')
 ax.scatter(points_traj[0:,0],points_traj[0:,1],points_traj[0:,2],c='r', marker='o')
 
-GNSS_m = np.sqrt(np.power((GNSS[0,0]-points_traj[:,0]),2) + np.power((GNSS[0,1]-points_traj[:,1]),2) + np.power((GNSS[0,2]-points_traj[:,2]),2))
+GNSS_m = np.sqrt(np.power((GNSS[0:len(points_traj),0]-points_traj[:,0]),2) + np.power((GNSS[0:len(points_traj),1]-points_traj[:,1]),2) + np.power((GNSS[0:len(points_traj),2]-points_traj[:,2]),2))
 
 print('current max deviation: ' + str(round(np.amax(GNSS_m),4)) + 'm')
 print('current min deviation: ' + str(round(np.amin(GNSS_m),4)) + 'm')

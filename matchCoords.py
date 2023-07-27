@@ -23,7 +23,7 @@ def main(camera,coord_LoD,coord_real):
         virt_pic1[coord_LoD[i,0],coord_LoD[i,1]] = 255
     #plt.imshow(virt_pic1)
     
-    path = './images_matchCoords/image1_LoD.jpeg'
+    path = './images_features/image1_LoD.jpeg'
     matplotlib.image.imsave(path, virt_pic1)
     #plt.imshow(virt_pic1)
     
@@ -36,13 +36,13 @@ def main(camera,coord_LoD,coord_real):
         virt_pic2[coord_real[i,0],coord_real[i,1]] = 255
     #plt.imshow(virt_pic2)
     
-    path = './images_matchCoords/image2_real.jpeg'
+    path = './images_features/image2_real.jpeg'
     matplotlib.image.imsave(path, virt_pic2)
     
     # Match features again on the feature-images
     
-    path1 = r'./images_matchCoords/image1_LoD.jpeg'
-    path2 = r'./images_matchCoords/image2_real.jpeg'
+    path1 = r'./images_features/image1_LoD.jpeg'
+    path2 = r'./images_features/image2_real.jpeg'
     image1 = cv2.imread(path1)
     image2 = cv2.imread(path2)
      
@@ -79,7 +79,7 @@ def main(camera,coord_LoD,coord_real):
     imageCoords_match_real = koord_pic2[1:]
             
     matched_image = cv2.drawMatches(image1, keypoints1, image2, keypoints2, good_matches, None, flags=cv2.DrawMatchesFlags_DRAW_RICH_KEYPOINTS)
-    path = './images_matchCoords/image3_matchingResult.jpeg'
+    path = './images_features/image3_matchingResult.jpeg'
     matplotlib.image.imsave(path, cv2.cvtColor(matched_image, cv2.COLOR_BGR2RGB))
     
     return imageCoords_match_LoD,imageCoords_match_real

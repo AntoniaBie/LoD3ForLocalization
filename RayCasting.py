@@ -52,8 +52,8 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,viewpoint_cam,i):
     vp = viewpoint_cam*GNSS_m
     print(vp)
     print(GNSS[i,:] + vp)
-    vp = GNSS[i,:] + vp
-    print(vp)
+    #vp = GNSS[i,:] + vp
+    #print(vp)
     #print('pitch: ' + str(GNSS_dz))
     #GNSS_dy = cam[8]*GNSS_m
         
@@ -129,48 +129,6 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,viewpoint_cam,i):
     #plt.savefig('./plots/t_hit_2.jpeg')
     #plt.savefig(path)
     
-    '''fig = plt.figure("GNSS Viewpoint")
-    ax = fig.add_subplot(projection='3d')
-    ax.scatter(GNSS[:,0],GNSS[:,1],GNSS[:,2])
-    ax.scatter(X[0],X[1],X[2],c='r', marker='o')'''
-    '''
-    # Feature Matching for both image-parts (LoD and reality)
-    koord_LoD, koord_real = FeatureMatching.get_coordinates(image_folder+"/"+list_images[i],path,i)
-    #print(koord_LoD.size)
-    #print(image_folder+"/"+list_images[i])
-    if koord_LoD.size == 1:
-        print("No good matches were found, skipping this image-pair")
-        coords = []
-        continue
-    
-    triangleIDs = ans['primitive_ids'].numpy()
-    triangleIDs_hit = []
-    vertices_1 = []
-    vertices_2 = []
-    vertices_3 = []
-    coords = []
-    triangle_vertices = mesh.triangle.indices.numpy()
-    triangle_vertices_positions = mesh.vertex.positions.numpy()
-    for i in range(0,len(koord_LoD)):
-        tmp = triangleIDs[round(koord_LoD[i,0]),round(koord_LoD[i,1])] 
-        if tmp < len(triangle_vertices):
-            triangleIDs_hit.append(tmp)
-            one,two,three = triangle_vertices[tmp,:] # tmp=row=ID
-            # order: first all vertices from one triangle, then from the next
-            coords.append(triangle_vertices_positions[one,:]) #3 coord per point
-            coords.append(triangle_vertices_positions[two,:]) #3 coord per point
-            coords.append(triangle_vertices_positions[three,:]) #3 coord per point
-            vertices_1.append(one)
-            vertices_2.append(two)
-            vertices_3.append(three)
-    triangleIDs_hit = np.asarray(triangleIDs_hit)
-    vertices_1 = np.asarray(vertices_1)
-    vertices_2 = np.asarray(vertices_2)
-    vertices_3 = np.asarray(vertices_3)
-    vertices = np.concatenate((np.array([vertices_1]).T,np.array([vertices_2]).T,np.array([vertices_3]).T),axis=1)
-
-    #time.sleep(5)
-    '''
     path_to_images = r'./images/image'
     
     #return koord_LoD, koord_real, coords

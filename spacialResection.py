@@ -139,7 +139,7 @@ def DLT(X, Y, Z, x, y):
     
     return X0, R, x0, y0, om, phi, kap
 
-def main(image_coords,real_coords,cam):
+def main(image_coords,real_coords,cam,GNSS):
     
     X_real = real_coords[:,0]
     Y_real = real_coords[:,1]
@@ -170,9 +170,9 @@ def main(image_coords,real_coords,cam):
     X0, R, x0, y0, om, phi, kap = DLT(X_real, Y_real, Z_real, image_coords_m[:, 1], image_coords_m[:, 2])
     
     x_o = np.zeros((6, 1))
-    x_o[0] = X0[0]
-    x_o[1] = X0[1]
-    x_o[2] = X0[2]
+    x_o[0] = GNSS[0]
+    x_o[1] = GNSS[1]
+    x_o[2] = GNSS[2]
     x_o[3] = om
     x_o[4] = phi
     x_o[5] = kap
@@ -274,7 +274,7 @@ def main(image_coords,real_coords,cam):
     
         probe = b_dach.reshape(-1) - f_x_dach
         
-        if iter == 100 or np.max(np.abs(probe)) < 1e-10:
+        if iter == 1000 or np.max(np.abs(probe)) < 1e-10:
             break
         #print(x_dach)
         x_o = x_dach
