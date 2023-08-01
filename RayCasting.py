@@ -17,18 +17,50 @@ from os import listdir
 import time
 import math
 
+#%% Visualization
+def visualize(mesh):
+        vis = o3d.visualization.Visualizer()
+        vis.create_window()
+        vis.add_geometry(mesh)
+        vis.run()
+        vis.destroy_window()
+        
+
 def raycasting(cam,rec_mesh,image_folder,GNSS,viewpoint_cam,i):
     
-    #o3d.visualization.draw_geometries([pcd, rec_mesh]) #for .ply
-    #print(rec_mesh)
-    #print('Vertices:')
-    #print(np.asarray(rec_mesh.vertices))
-    #print('Triangles:')
-    #print(np.asarray(rec_mesh.triangles))
+    if rec_mesh == 'LoD-2':
+        print('LoD-2 model was chosen.')
+        LoD2 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD2.obj", enable_post_processing=False, print_progress=True)
+         
+        mesh = o3d.t.geometry.TriangleMesh.from_legacy(LoD2)
+        scene = o3d.t.geometry.RaycastingScene()
+        _ = scene.add_triangles(mesh)
+        
+    elif rec_mesh == 'LoD-3': 
+        print('LoD-3 model was chosen.')
+        LoD2 = o3d.io.read_triangle_mesh("./data/Mesh/LoD2_selec_70_72_81.obj", enable_post_processing=False, print_progress=True)
+        LoD3 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD3.obj", enable_post_processing=False, print_progress=True) # only for output and exact coordinate extraction
+        windows = o3d.io.read_triangle_mesh(r'C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\LoD3_TUM_all\Window.obj')
+        wall = o3d.io.read_triangle_mesh(r'C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\LoD3_TUM_all\RoofSurface.obj')
+        roof = o3d.io.read_triangle_mesh(r'C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\LoD3_TUM_all\WallSurface.obj')
+        
+        LoD2_mesh = o3d.t.geometry.TriangleMesh.from_legacy(LoD2)
+        mesh = o3d.t.geometry.TriangleMesh.from_legacy(LoD3)
+        windows_mesh = o3d.t.geometry.TriangleMesh.from_legacy(windows)
+        wall_mesh = o3d.t.geometry.TriangleMesh.from_legacy(wall)
+        roof_mesh = o3d.t.geometry.TriangleMesh.from_legacy(roof)
+        scene = o3d.t.geometry.RaycastingScene()
+        _ = scene.add_triangles(LoD2_mesh)
+        _ = scene.add_triangles(windows_mesh)
+        _ = scene.add_triangles(wall_mesh)
+        _ = scene.add_triangles(roof_mesh)
+
+        
+    else:
+        print('Please choose a model before running (LoD-2 or LoD-3)')
+        
+    #visualize(curr_model) #for .obj  
     
-    mesh = o3d.t.geometry.TriangleMesh.from_legacy(rec_mesh)
-    scene = o3d.t.geometry.RaycastingScene()
-    _ = scene.add_triangles(mesh)
     
     #%% Ray Casting
     
@@ -50,8 +82,8 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,viewpoint_cam,i):
     GNSS_m = math.sqrt(pow((GNSS[i,0]-GNSS[i+1,0]),2) + pow((GNSS[i,1]-GNSS[i+1,1]),2) + pow((GNSS[i,2]-GNSS[i+1,2]),2))
     GNSS_dz = cam[7]*GNSS_m*math.pi/180
     vp = viewpoint_cam*GNSS_m
-    print(vp)
-    print(GNSS[i,:] + vp)
+    print(GNSS_dz)
+    #GNSS_dz = -0.3
     #vp = GNSS[i,:] + vp
     #print(vp)
     #print('pitch: ' + str(GNSS_dz))
@@ -121,15 +153,61 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,viewpoint_cam,i):
     #matplotlib.image.imsave(path, ans['t_hit'].numpy())
     
     # approximation with abs(), but the value is not important
-    matplotlib.image.imsave(path, abs(ans['primitive_normals'].numpy()))
+    a = plt.figure(1000),plt.imshow(ans['geometry_ids'].numpy(), vmax=4)
+    b = plt.figure(1001),plt.imshow(abs(ans['primitive_normals'].numpy()))
+    matplotlib.image.imsave('./images/image_' + 'geometry_ids' + '.jpeg', ans['geometry_ids'].numpy(), vmax=3)
+    matplotlib.image.imsave('./images/image_' + 'primitive_normals' + '.jpeg', abs(ans['primitive_normals'].numpy()))
+
+    a = plt.imread('./images/image_' + 'geometry_ids' + '.jpeg')
+    b = plt.imread('./images/image_' + 'primitive_normals' + '.jpeg')
+    matplotlib.image.imsave(path, a+b)
     # load images of the real world
     #list_images = os.listdir(image_folder)
     
     # save t_hit to save the colors
     #plt.savefig('./plots/t_hit_2.jpeg')
     #plt.savefig(path)
+    #plt.imshow(ans['primitive_ids'].numpy())
     
     path_to_images = r'./images/image'
+    
+    '''
+    plt.figure(1000),plt.imshow(ans['primitive_ids'].numpy())
+(<Figure size 640x480 with 1 Axes>, <matplotlib.image.AxesImage object at 0x0000016292258DC0>)
+
+IPdb [4]: plt.figure(1000),plt.imshow(ans['geometry_ids'].numpy())
+(<Figure size 640x480 with 1 Axes>, <matplotlib.image.AxesImage object at 0x0000016292270DF0>)
+
+IPdb [5]: plt.figure(1000),plt.imshow(ans['geometry_ids'].numpy(), vmax=3)
+(<Figure size 640x480 with 1 Axes>, <matplotlib.image.AxesImage object at 0x000001629229D7C0>)
+
+IPdb [6]: plt.figure(1001),plt.imshow(abs(ans['primitive_normals'].numpy()))
+(<Figure size 640x480 with 1 Axes>, <matplotlib.image.AxesImage object at 0x0000016292A92D30>)
+
+IPdb [7]: a = plt.figure(1000),plt.imshow(ans['geometry_ids'].numpy(), vmax=3)
+Warning: The exclamation mark option is enabled. Please use '!' as a prefix for Pdb commands.
+
+IPdb [8]: b = plt.figure(1001),plt.imshow(abs(ans['primitive_normals'].numpy()))
+
+IPdb [11]: plt.figure(1002),plt.imshow(ans['geometry_ids'].numpy()+abs(ans['primitive_normals'].numpy())[:,:,0])
+(<Figure size 640x480 with 1 Axes>, <matplotlib.image.AxesImage object at 0x0000016292D5ED00>)
+
+IPdb [13]: matplotlib.image.imsave('./images/image' + 'test1' + '.jpeg', abs(ans['primitive_normals'].numpy()))
+
+IPdb [14]: matplotlib.image.imsave('./images/image' + 'test1' + '.jpeg', ans['geometry_ids'].numpy(), vmax=3)
+
+IPdb [15]: matplotlib.image.imsave('./images/image' + 'test2' + '.jpeg', abs(ans['primitive_normals'].numpy()))
+
+IPdb [16]: a = plt.imread('./images/image' + 'test2' + '.jpeg')
+
+IPdb [17]: b = plt.imread('./images/image' + 'test1' + '.jpeg')
+
+IPdb [18]: figure(5),plt.imshow(a+b)
+*** NameError: name 'figure' is not defined
+
+IPdb [19]: plt.figure(5),plt.imshow(a+b)
+(<Figure size 640x480 with 1 Axes>, <matplotlib.image.AxesImage object at 0x0000016293730310>)
+    '''
     
     #return koord_LoD, koord_real, coords
     return ans, mesh, path_to_images

@@ -17,8 +17,8 @@ import matplotlib.pyplot as plt
 import math
 
 #%% setting that are obligatory for usage!
-method = ['feature images','sobel']
-image_type = ['corresponding image-pairs','segmentation']
+method = ['feature images','sobel','canny','mask','mask and sobel','mask and canny']
+image_type = ['real images','segmentation']
 
 #%% setting to be changed by the user
 GNSS = np.loadtxt("./data/GNSS/9_Route3.txt")
@@ -36,6 +36,7 @@ LoD3_72 = o3d.io.read_triangle_mesh(r"C:\Users\anton\OneDrive - TUM\Geodäsie un
 LoD3_21 = o3d.io.read_triangle_mesh(r"C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\building_21.obj",print_progress=True)
 TUM_LoD2 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD2.obj", enable_post_processing=False, print_progress=True)
 TUM_LoD3 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD3.obj", enable_post_processing=False, print_progress=True)
+#test = o3d.io.read_triangle_mesh(r"E:\Bachelorthesis\GML models\DEBY_LOD3_4906972.gml")
 #ImageFolder = "E:/Bachelorthesis/10_TUM_building34"
 
 #11m deviation, iteration:11
@@ -44,14 +45,19 @@ TUM_LoD3 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD3.obj", enable_post_pro
 #ImageFolder = "E:/Bachelorthesis/9_Route3_seg" #weiter unten eintragen
 #curr_model = LoD3_70 
 
-chosenMethod = method[0]
+chosenMethod = method[5]
 chosenImageType = image_type[0]
-curr_model = TUM_LoD3
+#curr_model = LoD3_70
+#curr_model = TUM_LoD3
+
+curr_model = 'LoD-3' #'LoD-2'
+
+folder_mask = r'E:\Bachelorthesis\9_Route3_seg_buildings'
 
 if chosenImageType == 'segmentation':
     ImageFolder = "E:/Bachelorthesis/9_Route3_seg"
     
-elif chosenImageType == 'corresponding image-pairs':
+elif chosenImageType == 'real images':
     ImageFolder = "E:/Bachelorthesis/9_Route3"
     
 else:
@@ -74,24 +80,15 @@ viewpoint_cam = np.array([0.416341,0.890226,-0.184817])
 camera = [c_9,width,height,dx_9,dy_9,dz_9,roll,pitch,yaw,pixel_M]
 GNSS = DataPrep.data_prep(GNSS, camera)
 
-#%% Visualization
-def visualize(mesh):
-        vis = o3d.visualization.Visualizer()
-        vis.create_window()
-        vis.add_geometry(mesh)
-        vis.run()
-        vis.destroy_window()
-        
-#visualize(curr_model) #for .obj
 
 #%% Ray Casting and Coordinate Calculation
 points_traj = np.array([0,0,0])
 points_traj = points_traj[:,np.newaxis]
-for img in range(0,3):
+for img in range(0,1):
     ans,mesh,path = RC.raycasting(camera,curr_model,ImageFolder,GNSS,viewpoint_cam,img)
 
     # Get coords and calculate camera position
-    points_traj = Manager_3DCoords.main(camera,GNSS,mesh,ImageFolder,path,ans,points_traj,chosenMethod,img)
+    points_traj = Manager_3DCoords.main(camera,GNSS,mesh,ImageFolder,path,folder_mask,ans,points_traj,chosenMethod,img)
 
 #%% Test spacial resection
 #point = spacialResection.main(a,b[1::3,:],c)
@@ -102,74 +99,14 @@ ax = fig.add_subplot(projection='3d')
 ax.scatter(GNSS[:,0],GNSS[:,1],GNSS[:,2])
 ax.scatter(GNSS[img,0],GNSS[img,1],GNSS[img,2],c='g',marker='o')
 ax.scatter(points_traj[:,0],points_traj[:,1],points_traj[:,2],c='r', marker='o')
+ax.plot(GNSS[:,0],GNSS[:,1],GNSS[:,2])
+ax.plot(points_traj[:,0],points_traj[:,1],points_traj[:,2],c='r')
 
 GNSS_m = np.sqrt(np.power((GNSS[img:img+len(points_traj),0]-points_traj[:,0]),2) + np.power((GNSS[img:img+len(points_traj),1]-points_traj[:,1]),2) + np.power((GNSS[img:img+len(points_traj),2]-points_traj[:,2]),2))
 
 print('current max deviation: ' + str(round(np.amax(GNSS_m),4)) + 'm')
 print('current min deviation: ' + str(round(np.amin(GNSS_m),4)) + 'm')
     
-
-#%% Test roll, pitch, yaw
-GNSS1 = GNSS[0,:]
-GNSS2 = GNSS[1,:]
-GNSS_m = math.sqrt(pow((GNSS[1,0]-GNSS[2,0]),2) + pow((GNSS[1,1]-GNSS[2,1]),2) + pow((GNSS[1,2]-GNSS[2,2]),2))
-roll = roll/180*math.pi
-pitch = pitch/180*math.pi
-yaw = yaw/180*math.pi
-r11 =  math.cos(pitch) *  math.cos(yaw)
-r12 = - math.cos(pitch) *  math.sin(yaw)
-r13 =  math.sin(pitch)
-r21 =  math.cos(roll) *  math.sin(yaw) +  math.sin(roll) *  math.sin(pitch) *  math.cos(yaw)
-r22 =  math.cos(roll) *  math.cos(yaw) -  math.sin(roll) *  math.sin(pitch) *  math.sin(yaw)
-r23 = - math.sin(roll) *  math.cos(pitch)
-r31 =  math.sin(roll) *  math.sin(yaw) -  math.cos(roll) *  math.sin(pitch) *  math.cos(yaw)
-r32 =  math.sin(roll) *  math.cos(yaw) +  math.cos(roll) *  math.sin(pitch) *  math.sin(yaw)
-r33 =  math.cos(roll) *  math.cos(pitch)
-
-R1 =  np.array([[r11, r12, r13], [r21, r22, r23], [r31, r32, r33]])
-
-X_test1 = GNSS2-GNSS1 + np.matmul(R1,GNSS1)
-
-r11 = 1
-r12 = 0
-r13 = 0
-r21 = 0
-r22 = math.cos(roll) 
-r23 = math.sin(roll) 
-r31 = 0
-r32 = -math.sin(roll)
-r33 = math.cos(roll)
-
-Rx =  np.array([[r11, r12, r13], [r21, r22, r23], [r31, r32, r33]])
-
-r11 = math.cos(pitch)
-r12 = 0
-r13 = -math.sin(pitch)
-r21 = 0
-r22 = 1
-r23 = 0
-r31 = math.sin(pitch)
-r32 = 0
-r33 = math.cos(pitch)
-
-Ry =  np.array([[r11, r12, r13], [r21, r22, r23], [r31, r32, r33]])
-
-r11 = math.cos(yaw)
-r12 = -math.sin(yaw)
-r13 = 0
-r21 = math.sin(yaw)
-r22 = math.cos(yaw)
-r23 = 0
-r31 = 0
-r32 = 0
-r33 = 1
-
-Rz =  np.array([[r11, r12, r13], [r21, r22, r23], [r31, r32, r33]])
-
-R = np.matmul(Rz,Ry)
-R = np.matmul(R,Rx)
-
-X_test1 = GNSS2-GNSS1 + np.matmul(R,GNSS2)
 
 #%% Test for combining LoD2 and LoD3 after raycasting
 #import cv2
