@@ -115,8 +115,8 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,ans,traj_p
         # Blur the image for better edge detection
         img_real_blur = cv2.GaussianBlur(img_real_gray, (3,3), 0) 
         img_LoD_blur = cv2.GaussianBlur(img_LoD_gray, (3,3), 0)
-        edges_real = cv2.Canny(image=img_real_blur, threshold1=100, threshold2=200)
-        edges_LoD = cv2.Canny(image=img_LoD_blur, threshold1=100, threshold2=200)
+        edges_real = cv2.Canny(image=img_real_blur, threshold1=100, threshold2=100)
+        edges_LoD = cv2.Canny(image=img_LoD_blur, threshold1=100, threshold2=100)
         
         #cv2.imshow('Canny Edge Detection', edges_real)
         #cv2.imshow('Canny Edge Detection', edges_LoD)

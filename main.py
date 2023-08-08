@@ -45,12 +45,12 @@ TUM_LoD3 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD3.obj", enable_post_pro
 #ImageFolder = "E:/Bachelorthesis/9_Route3_seg" #weiter unten eintragen
 #curr_model = LoD3_70 
 
-chosenMethod = method[1]
+chosenMethod = method[3]
 chosenImageType = image_type[0]
 #curr_model = LoD3_70
 #curr_model = TUM_LoD3
 
-curr_model = 'LoD-2' #'LoD-2'
+curr_model = 'LoD-3' #'LoD-2'
 
 folder_mask = r'E:\Bachelorthesis\9_Route3_seg_buildings'
 
@@ -84,7 +84,7 @@ GNSS = DataPrep.data_prep(GNSS, camera)
 #%% Ray Casting and Coordinate Calculation
 points_traj = np.array([0,0,0])
 points_traj = points_traj[:,np.newaxis]
-for img in range(5,8):
+for img in range(0,34):
     ans,mesh,path = RC.raycasting(camera,curr_model,ImageFolder,GNSS,viewpoint_cam,img)
 
     # Get coords and calculate camera position
