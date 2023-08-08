@@ -151,8 +151,8 @@ def main(image_coords,real_coords,cam,GNSS):
     
     pixelcoords = np.column_stack((np.arange(0, len(image_coords)).tolist(),image_coords[:,0],image_coords[:,1]))
     image_coords_m = np.copy(pixelcoords.astype(np.float32))
-    image_coords_m[:, 1] = ((image_coords_m[:, 1] - width / 2 - 1) * pixel_m + pixel_m / 2) * 7952 / width
-    image_coords_m[:, 2] = ((-image_coords_m[:, 2] + height / 2 - 1) * pixel_m + pixel_m / 2) * 7952 / width
+    image_coords_m[:, 1] = ((image_coords_m[:, 1] - width / 2 - 1) * pixel_m + pixel_m / 2) * width / height
+    image_coords_m[:, 2] = ((-image_coords_m[:, 2] + height / 2 - 1) * pixel_m + pixel_m / 2) * width / height
     
     # Plot zur Kontrolle der umgerechneten Bildkoordinaten der Passpunkte
     
@@ -302,4 +302,4 @@ def main(image_coords,real_coords,cam,GNSS):
    # 
    # plt.show()
     print('Iteration: ' + str(iter))
-    return np.asarray([x_o[0],x_o[1],x_o[2]])
+    return np.asarray([x_o[0],x_o[1],x_o[2]]), std_xx

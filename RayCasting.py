@@ -39,6 +39,7 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,viewpoint_cam,i):
     elif rec_mesh == 'LoD-3': 
         print('LoD-3 model was chosen.')
         LoD2 = o3d.io.read_triangle_mesh("./data/Mesh/LoD2_selec_70_72_81.obj", enable_post_processing=False, print_progress=True)
+        #LoD2 = o3d.io.read_triangle_mesh(r"C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\TUM_LoD3.obj", enable_post_processing=False, print_progress=True)
         LoD3 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD3.obj", enable_post_processing=False, print_progress=True) # only for output and exact coordinate extraction
         windows = o3d.io.read_triangle_mesh(r'C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\LoD3_TUM_all\Window.obj')
         wall = o3d.io.read_triangle_mesh(r'C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\LoD3_TUM_all\RoofSurface.obj')
@@ -82,7 +83,7 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,viewpoint_cam,i):
     GNSS_m = math.sqrt(pow((GNSS[i,0]-GNSS[i+1,0]),2) + pow((GNSS[i,1]-GNSS[i+1,1]),2) + pow((GNSS[i,2]-GNSS[i+1,2]),2))
     GNSS_dz = cam[7]*GNSS_m*math.pi/180
     vp = viewpoint_cam*GNSS_m
-    print(GNSS_dz)
+    #print(GNSS_dz)
     #GNSS_dz = -0.3
     #vp = GNSS[i,:] + vp
     #print(vp)
@@ -153,8 +154,8 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,viewpoint_cam,i):
     #matplotlib.image.imsave(path, ans['t_hit'].numpy())
     
     # approximation with abs(), but the value is not important
-    a = plt.figure(1000),plt.imshow(ans['geometry_ids'].numpy(), vmax=4)
-    b = plt.figure(1001),plt.imshow(abs(ans['primitive_normals'].numpy()))
+    #a = plt.figure(1000),plt.imshow(ans['geometry_ids'].numpy(), vmax=4)
+    #b = plt.figure(1001),plt.imshow(abs(ans['primitive_normals'].numpy()))
     matplotlib.image.imsave('./images/image_' + 'geometry_ids' + '.jpeg', ans['geometry_ids'].numpy(), vmax=3)
     matplotlib.image.imsave('./images/image_' + 'primitive_normals' + '.jpeg', abs(ans['primitive_normals'].numpy()))
 

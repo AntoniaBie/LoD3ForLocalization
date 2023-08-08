@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import math
 
 #%% setting that are obligatory for usage!
-method = ['feature images','sobel','canny','mask','mask and sobel','mask and canny']
+method = ['real images','feature images','sobel','canny','mask','mask and sobel','mask and canny']
 image_type = ['real images','segmentation']
 
 #%% setting to be changed by the user
@@ -45,7 +45,7 @@ TUM_LoD3 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD3.obj", enable_post_pro
 #ImageFolder = "E:/Bachelorthesis/9_Route3_seg" #weiter unten eintragen
 #curr_model = LoD3_70 
 
-chosenMethod = method[5]
+chosenMethod = method[1]
 chosenImageType = image_type[0]
 #curr_model = LoD3_70
 #curr_model = TUM_LoD3
@@ -84,11 +84,12 @@ GNSS = DataPrep.data_prep(GNSS, camera)
 #%% Ray Casting and Coordinate Calculation
 points_traj = np.array([0,0,0])
 points_traj = points_traj[:,np.newaxis]
-for img in range(0,1):
+for img in range(5,6):
     ans,mesh,path = RC.raycasting(camera,curr_model,ImageFolder,GNSS,viewpoint_cam,img)
 
     # Get coords and calculate camera position
-    points_traj = Manager_3DCoords.main(camera,GNSS,mesh,ImageFolder,path,folder_mask,ans,points_traj,chosenMethod,img)
+    points_traj, std = Manager_3DCoords.main(camera,GNSS,mesh,ImageFolder,path,folder_mask,ans,points_traj,chosenMethod,img)
+    print('Standard deviation of the current point: ' + str(std[0:3]))
 
 #%% Test spacial resection
 #point = spacialResection.main(a,b[1::3,:],c)
@@ -98,9 +99,15 @@ fig = plt.figure("Trajectory")
 ax = fig.add_subplot(projection='3d')
 ax.scatter(GNSS[:,0],GNSS[:,1],GNSS[:,2])
 ax.scatter(GNSS[img,0],GNSS[img,1],GNSS[img,2],c='g',marker='o')
-ax.scatter(points_traj[:,0],points_traj[:,1],points_traj[:,2],c='r', marker='o')
 ax.plot(GNSS[:,0],GNSS[:,1],GNSS[:,2])
+#for point in range(len(points_traj)):
+#    if points_traj[point,0] < 1e+06:
+#        ax.scatter(points_traj[point,0],points_traj[point,1],points_traj[point,2],c='r', marker='o')
+#        ax.plot(points_traj[point,0],points_traj[point,1],points_traj[point,2],c='r')
+ax.scatter(points_traj[:,0],points_traj[:,1],points_traj[:,2],c='r', marker='o')
 ax.plot(points_traj[:,0],points_traj[:,1],points_traj[:,2],c='r')
+
+
 
 GNSS_m = np.sqrt(np.power((GNSS[img:img+len(points_traj),0]-points_traj[:,0]),2) + np.power((GNSS[img:img+len(points_traj),1]-points_traj[:,1]),2) + np.power((GNSS[img:img+len(points_traj),2]-points_traj[:,2]),2))
 

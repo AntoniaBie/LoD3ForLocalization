@@ -19,15 +19,27 @@ def get_coordinates(im1,im2,i):
     keypoints1, descriptors1 = orb.detectAndCompute(gray1, None)
     keypoints2, descriptors2 = orb.detectAndCompute(gray2, None)
     
-    bf = cv2.BFMatcher()
-    matches = bf.knnMatch(descriptors1, descriptors2, k=2)
+    #bf = cv2.BFMatcher()
+    #matches = bf.knnMatch(descriptors1, descriptors2, k=2)
+    
+    # FLANN parameters
+    FLANN_INDEX_KDTREE = 0
+    index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
+    search_params = dict(checks=50)   # or pass empty dictionary
+    
+    flann = cv2.FlannBasedMatcher(index_params,search_params)
+    
+    des1 = np.float32(descriptors1)
+    des2 = np.float32(descriptors2)
+    
+    matches = flann.knnMatch(des1,des2,k=2)
     
     good_matches = []
     for m, n in matches:
         if m.distance < 0.85 * n.distance:
             good_matches.append(m)
             
-    print("Number of good matches: ", len(good_matches))
+    #print("Number of good matches: ", len(good_matches))
     koord_pic1 = np.array([0,0])  
     koord_pic2 = np.array([0,0]) 
             

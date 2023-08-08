@@ -85,13 +85,14 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,ans,traj_p
             #a_real = a_real[:,:,0]
             #a_LoD = plt.imread(r'./images_sobel/image_LoD.jpeg')
             #a_LoD = a_LoD[:,:,0]
-            #coord1_LoD_2D_selection = np.array([[745.0,443.0],[950.0,673.0],[853.0,564.0],[799.0,506.0],[902.0,621.0],[948.0,933.0]])
-            #coord1_real_2D_selection = np.array([[556,44],[694,225],[628,136],[595,96],[661,184],[690,254]])
+            coord1_LoD_2D_selection = np.array([[827.0,56.0],[873.0,174.0],[1267.0,262.0],[1434.0,103.0],[496.0,5.0],[520.0,27.0],[516.0,207.0],[482.0,182],[612.0,138.0],[631.0,157.0],[613.0,283.0],[599.0,273.0],[795.0,143.0],[1737.0,378]])
+            coord1_real_2D_selection = np.array([[1056.0,505.0],[1100.0,621.0],[1488.0,678.0],[1661.0,503.0],[615.0,306.0],[645.0,341.0],[648.0,536.0],[616.0,520.0],[784.0,509.0],[804.0,526.0],[802.0,669.0],[784.0,662],[1015.0,551.0],[2001.0,567.0]])
             #coord1_LoD_2D_selection = np.concatenate([coord1_LoD_2D_selection[:,1],coord1_LoD_2D_selection[:,0]])
             #coord1_real_2D_selection = np.concatenate([coord1_real_2D_selection[:,1],coord1_real_2D_selection[:,0]])
             
             # extract the 3D coordinates for the features which are matched between real world and LoD-model
             coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
+            print('.')
             
     elif method == 'canny':
         print('Method: canny')
@@ -138,6 +139,33 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,ans,traj_p
             # only for the one image-pair: these camera coords are calculated!
             print("__________________________________________")
             print("Now using images created by the canny edge detection")
+            coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
+                
+            # extract the 3D coordinates for the features which are matched between real world and LoD-model
+            coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
+       
+    
+    elif method == 'real images':
+        print('Method: real images')
+        
+        list_images = os.listdir(image_folder_real)
+        path_real = image_folder_real+"/"+list_images[i]
+        
+        path_LoD = image_folder_LoD + str(i) + ".jpeg"
+
+        coord1_LoD_2D,coord1_real_2D = FeatureMatching.get_coordinates(path_real,path_LoD,1003)
+        
+        
+        if coord1_LoD_2D.size == 1 or coord1_real_2D.size == 1:
+            print("No good matches were found, skipping this image-pair")
+            traj = traj_points
+            
+        else:
+            
+            # match real world and LoD-model 2D images coordinates
+            # only for the one image-pair: these camera coords are calculated!
+            print("__________________________________________")
+            print("Now using real images")
             coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
                 
             # extract the 3D coordinates for the features which are matched between real world and LoD-model
@@ -333,7 +361,7 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,ans,traj_p
     else:
         print('Please select a method to find features in the images.')
     
-    camera_pos = spacialResection.main(coord1_real_2D_selection,coord1_LoD_3D,cam,GNSS[i,:])
+    camera_pos, std = spacialResection.main(coord1_real_2D_selection,coord1_LoD_3D,cam,GNSS[i,:])
         
     traj_points_x.append(camera_pos[0])
     traj_points_y.append(camera_pos[1])
@@ -349,4 +377,4 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,ans,traj_p
     
     traj = np.concatenate((traj_points,traj),axis = 1)
     
-    return traj
+    return traj, std
