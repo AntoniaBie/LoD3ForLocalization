@@ -81,6 +81,7 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,viewpoint_cam,i):
 
     # test with dy
     GNSS_m = math.sqrt(pow((GNSS[i,0]-GNSS[i+1,0]),2) + pow((GNSS[i,1]-GNSS[i+1,1]),2) + pow((GNSS[i,2]-GNSS[i+1,2]),2))
+    #GNSS_dz = cam[7]*GNSS_m*math.pi/180 - 1
     GNSS_dz = cam[7]*GNSS_m*math.pi/180
     vp = viewpoint_cam*GNSS_m
     #print(GNSS_dz)
@@ -154,8 +155,11 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,viewpoint_cam,i):
     #matplotlib.image.imsave(path, ans['t_hit'].numpy())
     
     # approximation with abs(), but the value is not important
-    #a = plt.figure(1000),plt.imshow(ans['geometry_ids'].numpy(), vmax=4)
-    #b = plt.figure(1001),plt.imshow(abs(ans['primitive_normals'].numpy()))
+    b = plt.figure(1001),plt.imshow(abs(ans['primitive_normals'].numpy()))
+    if rec_mesh == 'LoD-2':
+        a = plt.figure(1000),plt.imshow(ans['geometry_ids'].numpy(), vmax=1)
+    else:
+        a = plt.figure(1000),plt.imshow(ans['geometry_ids'].numpy(), vmax=3)
     matplotlib.image.imsave('./images/image_' + 'geometry_ids' + '.jpeg', ans['geometry_ids'].numpy(), vmax=3)
     matplotlib.image.imsave('./images/image_' + 'primitive_normals' + '.jpeg', abs(ans['primitive_normals'].numpy()))
 

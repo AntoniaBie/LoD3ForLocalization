@@ -50,7 +50,7 @@ chosenImageType = image_type[0]
 #curr_model = LoD3_70
 #curr_model = TUM_LoD3
 
-curr_model = 'LoD-3' #'LoD-2'
+curr_model = 'LoD-2' #'LoD-2'
 
 folder_mask = r'E:\Bachelorthesis\9_Route3_seg_buildings'
 
@@ -84,12 +84,16 @@ GNSS = DataPrep.data_prep(GNSS, camera)
 #%% Ray Casting and Coordinate Calculation
 points_traj = np.array([0,0,0])
 points_traj = points_traj[:,np.newaxis]
-for img in range(0,34):
+for img in range(29,33):
     ans,mesh,path = RC.raycasting(camera,curr_model,ImageFolder,GNSS,viewpoint_cam,img)
 
     # Get coords and calculate camera position
     points_traj, std = Manager_3DCoords.main(camera,GNSS,mesh,ImageFolder,path,folder_mask,ans,points_traj,chosenMethod,img)
+    print("Point " + str(img))
     print('Standard deviation of the current point: ' + str(std[0:3]))
+    traj_test = points_traj.T
+    #GNSS_m = np.sqrt(np.power((GNSS[img,0]-traj_test[img,0]),2) + np.power((GNSS[img,1]-traj_test[img,1]),2) + np.power((GNSS[img,2]-traj_test[img,2]),2))
+    #print('current deviation from GNSS: ' + str(GNSS_m) + 'm')
 
 #%% Test spacial resection
 #point = spacialResection.main(a,b[1::3,:],c)

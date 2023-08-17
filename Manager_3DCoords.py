@@ -139,10 +139,11 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,ans,traj_p
             # only for the one image-pair: these camera coords are calculated!
             print("__________________________________________")
             print("Now using images created by the canny edge detection")
-            coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
+            #coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
                 
             # extract the 3D coordinates for the features which are matched between real world and LoD-model
-            coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
+            #coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
+            coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D, coord1_real_2D)
        
     
     elif method == 'real images':
@@ -166,10 +167,11 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,ans,traj_p
             # only for the one image-pair: these camera coords are calculated!
             print("__________________________________________")
             print("Now using real images")
-            coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
+            #coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
                 
             # extract the 3D coordinates for the features which are matched between real world and LoD-model
-            coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
+            #coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
+            coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D, coord1_real_2D)
        
     
     elif method == 'sobel':
@@ -222,11 +224,12 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,ans,traj_p
             # only for the one image-pair: these camera coords are calculated!
             print("__________________________________________")
             print("Now using images created by the sobel filter")
-            coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
+            #coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
                 
             # extract the 3D coordinates for the features which are matched between real world and LoD-model
-            coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
-            
+            #coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
+            coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D, coord1_real_2D)
+       
     elif method == 'mask':
         print('Method: mask')
         
@@ -252,11 +255,13 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,ans,traj_p
             # only for the one image-pair: these camera coords are calculated!
             print("__________________________________________")
             print("Now using masked images")
-            coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
+            #coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
                 
             # extract the 3D coordinates for the features which are matched between real world and LoD-model
-            coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
-
+            #coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
+            coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D, coord1_real_2D)
+       
+        
     elif method == 'mask and sobel':
         print('Method: mask and sobel')
         
@@ -306,11 +311,12 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,ans,traj_p
             # only for the one image-pair: these camera coords are calculated!
             print("__________________________________________")
             print("Now using masked images and sobel")
-            coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
+            #coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
                 
             # extract the 3D coordinates for the features which are matched between real world and LoD-model
-            coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
-
+            #coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
+            coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D, coord1_real_2D)
+       
 
     elif method == 'mask and canny':
         print('Method: mask and canny')
@@ -353,11 +359,12 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,ans,traj_p
             # only for the one image-pair: these camera coords are calculated!
             print("__________________________________________")
             print("Now using masked images and canny")
-            coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
+            #coord1_LoD_2D_selection,coord1_real_2D_selection = matchCoords.main(cam,coord1_LoD_2D,coord1_real_2D)
                 
             # extract the 3D coordinates for the features which are matched between real world and LoD-model
-            coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
-    
+            #coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D_selection, coord1_real_2D_selection)
+            coord1_LoD_3D, coord1_real_2D_selection = extractCoords.main(ans, mesh, coord1_LoD_2D, coord1_real_2D)
+       
     else:
         print('Please select a method to find features in the images.')
     

@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import cv2
 
 def main(camera,coord_LoD,coord_real):
+    print("Now creating feature images.")
     #images in path are deleted after each for-loop
     width = camera[1]
     height = camera[2]

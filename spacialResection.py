@@ -279,7 +279,7 @@ def main(image_coords,real_coords,cam,GNSS):
         #print(x_dach)
         x_o = x_dach
         
-    print(probe)
+    #print(probe)
     
     sig02 = (v_dach.T @ Pbb @ v_dach) / (n - u)
     
