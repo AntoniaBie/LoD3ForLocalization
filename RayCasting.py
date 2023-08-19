@@ -38,13 +38,17 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,viewpoint_cam,i):
         
     elif rec_mesh == 'LoD-3': 
         print('LoD-3 model was chosen.')
-        LoD2 = o3d.io.read_triangle_mesh("./data/Mesh/LoD2_selec_70_72_81.obj", enable_post_processing=False, print_progress=True)
+        LoD2 = o3d.io.read_triangle_mesh("./data/Mesh/LoD2_selec_70_72_81_underpass.obj", enable_post_processing=False, print_progress=True)
         #LoD2 = o3d.io.read_triangle_mesh(r"C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\TUM_LoD3.obj", enable_post_processing=False, print_progress=True)
         LoD3 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD3.obj", enable_post_processing=False, print_progress=True) # only for output and exact coordinate extraction
-        windows = o3d.io.read_triangle_mesh(r'C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\LoD3_TUM_all\Window.obj')
-        wall = o3d.io.read_triangle_mesh(r'C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\LoD3_TUM_all\RoofSurface.obj')
-        roof = o3d.io.read_triangle_mesh(r'C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\LoD3_TUM_all\WallSurface.obj')
+        windows = o3d.io.read_triangle_mesh(r'C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\LoD3_TUM_all_neu2\Window.obj')
+        roof = o3d.io.read_triangle_mesh(r'C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\LoD3_TUM_all_neu2\RoofSurface.obj')
+        #wall = o3d.io.read_triangle_mesh(r'C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\obj\newBuildings\LoD3_TUM_all_neu2\WallSurface.obj')
+        wall = o3d.io.read_triangle_mesh(r"./data/Mesh/WallSurface2.obj")
         
+        #visualize(windows)
+        #visualize(wall)
+        #visualize(roof)
         LoD2_mesh = o3d.t.geometry.TriangleMesh.from_legacy(LoD2)
         mesh = o3d.t.geometry.TriangleMesh.from_legacy(LoD3)
         windows_mesh = o3d.t.geometry.TriangleMesh.from_legacy(windows)
@@ -159,7 +163,7 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,viewpoint_cam,i):
     if rec_mesh == 'LoD-2':
         a = plt.figure(1000),plt.imshow(ans['geometry_ids'].numpy(), vmax=1)
     else:
-        a = plt.figure(1000),plt.imshow(ans['geometry_ids'].numpy(), vmax=3)
+        a = plt.figure(1000),plt.imshow(ans['geometry_ids'].numpy(), vmax=4)
     matplotlib.image.imsave('./images/image_' + 'geometry_ids' + '.jpeg', ans['geometry_ids'].numpy(), vmax=3)
     matplotlib.image.imsave('./images/image_' + 'primitive_normals' + '.jpeg', abs(ans['primitive_normals'].numpy()))
 

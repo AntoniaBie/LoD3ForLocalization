@@ -141,6 +141,11 @@ def DLT(X, Y, Z, x, y):
 
 def main(image_coords,real_coords,cam,GNSS):
     
+    if len(image_coords) < 6:
+        print("Not enough points on the LoD-model. Skipping this image.")
+        return np.asarray([0,0,0]), [0]
+    
+    
     X_real = real_coords[:,0]
     Y_real = real_coords[:,1]
     Z_real = real_coords[:,2]
