@@ -12,7 +12,7 @@ import os
 from os import listdir
 import DataPrep
 import Manager_3DCoords
-import spacialResection
+import spatialResection
 import matplotlib.pyplot as plt
 import math
 
@@ -21,7 +21,7 @@ method = ['real images','feature images','sobel','canny','mask','mask and sobel'
 image_type = ['real images','segmentation']
 
 #%% setting to be changed by the user
-GNSS = np.loadtxt("./data/GNSS/9_Route1.txt")
+GNSS = np.loadtxt("./data/GNSS/9_Route3.txt")
 LoD2 = o3d.io.read_point_cloud(r"C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\xyz\LOD2_koord_neu_xyz/LOD2_selection.xyz")
 LoD3 = o3d.io.read_point_cloud(r"C:\Users\anton\OneDrive - TUM\Geodäsie und Geoinformation\A_Bachelorarbeit\Data\xyz\LOD3_xyz\LOD3_selection.xyz")
 LoD2_mesh = o3d.io.read_triangle_mesh("./data/Mesh/TriangleMesh_LoD2.ply", enable_post_processing=False, print_progress=True)
@@ -45,20 +45,20 @@ TUM_LoD3 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD3.obj", enable_post_pro
 #ImageFolder = "E:/Bachelorthesis/9_Route3_seg" #weiter unten eintragen
 #curr_model = LoD3_70 
 
-chosenMethod = method[6]
+chosenMethod = method[1]
 chosenImageType = image_type[0]
 #curr_model = LoD3_70
 #curr_model = TUM_LoD3
 
 curr_model = 'LoD-3' #'LoD-2'
 
-folder_mask = r'E:\Bachelorthesis\9_Route1_seg_buildings'
+folder_mask = r'E:\Bachelorthesis\9_Route3_seg_buildings'
 
 if chosenImageType == 'segmentation':
-    ImageFolder = "E:/Bachelorthesis/9_Route1_seg"
+    ImageFolder = "E:/Bachelorthesis/9_Route3_seg"
     
 elif chosenImageType == 'real images':
-    ImageFolder = "E:/Bachelorthesis/9_Route1"
+    ImageFolder = "E:/Bachelorthesis/9_Route3"
     
 else:
     print('Please select the image type to get the images from the right folder.')
@@ -85,7 +85,7 @@ GNSS = DataPrep.data_prep(GNSS, camera)
 points_traj = np.array([0,0,0])
 points_traj = points_traj[:,np.newaxis]
 i = 1
-for img in range(1,34):
+for img in range(6,10):
     ans,mesh,path = RC.raycasting(camera,curr_model,ImageFolder,GNSS,viewpoint_cam,img)
 
     # Get coords and calculate camera position
@@ -97,8 +97,7 @@ for img in range(1,34):
     print('current deviation from GNSS: ' + str(GNSS_m) + 'm')
     i = i + 1
     
-#%% Test spacial resection
-#point = spacialResection.main(a,b[1::3,:],c)
+#%% Test spatial resection
 points_traj = points_traj.T
 points_traj = points_traj[1:,:]
 fig = plt.figure("Trajectory")

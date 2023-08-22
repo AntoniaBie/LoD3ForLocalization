@@ -10,7 +10,7 @@ import extractCoords
 import os
 from os import listdir
 import matchCoords
-import spacialResection
+import spatialResection
 import matplotlib.image
 import matplotlib.pyplot as plt
 import cv2
@@ -368,7 +368,7 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,ans,traj_p
     else:
         print('Please select a method to find features in the images.')
     
-    camera_pos, std = spacialResection.main(coord1_real_2D_selection,coord1_LoD_3D,cam,GNSS[i,:])
+    camera_pos, std = spatialResection.main(coord1_real_2D_selection,coord1_LoD_3D,cam,GNSS[i,:])
         
     traj_points_x.append(camera_pos[0])
     traj_points_y.append(camera_pos[1])

@@ -58,10 +58,10 @@ def get_coordinates(im1,im2,i):
         
     matched_image = cv2.drawMatches(image1, keypoints1, image2, keypoints2, good_matches, None, flags=cv2.DrawMatchesFlags_DRAW_RICH_KEYPOINTS)
      
-    #text = "Figure " + str(i)
-    #fig = plt.figure(text)           
-    #plt.imshow(cv2.cvtColor(matched_image, cv2.COLOR_BGR2RGB))
-    #plt.legend(["matched points 1", "matched points 2"])
-    #plt.title("ORB")
-    #plt.show()
+    text = "Figure " + str(i)
+    fig = plt.figure(text)           
+    plt.imshow(cv2.cvtColor(matched_image, cv2.COLOR_BGR2RGB))
+    plt.legend(["matched points 1", "matched points 2"])
+    plt.title("ORB")
+    plt.show()
     return koord_pic1,koord_pic2
