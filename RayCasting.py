@@ -33,7 +33,10 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,i):
         
     elif rec_mesh == 'LoD3': 
         print('LoD-3 model was chosen.')
-        LoD2 = o3d.io.read_triangle_mesh("./data/Mesh/LoD2_selec_70_72_81_underpass.obj", enable_post_processing=False, print_progress=True)
+        # this LoD2 model is here, because a combination of LoD2 and LoD3 was used
+        # for the buildings where no LoD3 model was available, a LoD2 model was used instead
+        LoD2 = o3d.io.read_triangle_mesh("./data/Mesh/LoD2_selec_70_72_81_underpass.obj", 
+                        enable_post_processing=False, print_progress=True)
         # only for output and exact coordinate extraction
         LoD3 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD3.obj", 
                         enable_post_processing=False, print_progress=True) 
