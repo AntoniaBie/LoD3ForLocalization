@@ -23,7 +23,7 @@ def visualize(mesh):
 def raycasting(cam,rec_mesh,image_folder,GNSS,i):
     
     if rec_mesh == 'LoD2':
-        print('LoD-2 model was chosen.')
+        print('LoD2 model was chosen.')
         LoD2 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD2.obj", 
                         enable_post_processing=False, print_progress=True)
          
@@ -32,7 +32,7 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,i):
         _ = scene.add_triangles(mesh)
         
     elif rec_mesh == 'LoD3': 
-        print('LoD-3 model was chosen.')
+        print('LoD3 model was chosen.')
         # this LoD2 model is here, because a combination of LoD2 and LoD3 was used
         # for the buildings where no LoD3 model was available, a LoD2 model was used instead
         LoD2 = o3d.io.read_triangle_mesh("./data/Mesh/LoD2_selec_70_72_81_underpass.obj", 
@@ -98,7 +98,7 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,i):
     path = './images/image' + str(i) + '.jpeg'
     # approximation with abs(), but the value is not important
     b = plt.figure(1001),plt.imshow(abs(raycast_results['primitive_normals'].numpy()))
-    if rec_mesh == 'LoD-2':
+    if rec_mesh == 'LoD2':
         a = plt.figure(1000),plt.imshow(raycast_results['geometry_ids'].numpy(), 
                                         vmax=1)
     else:

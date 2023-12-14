@@ -18,7 +18,7 @@ image_type = ['real images','segmentation']
 
 #%% settings to be changed by the user
 GNSS = np.loadtxt("./data/GNSS/9_Route3.txt")
-chosenMethod = method[4]
+chosenMethod = method[0]
 chosenImageType = image_type[0]
 
 curr_model = 'LoD3' #or 'LoD2'
@@ -58,7 +58,7 @@ GNSS = DataPrep.data_prep(GNSS, camera)
 points_traj = np.array([0,0,0])
 points_traj = points_traj[:,np.newaxis]
 i = 1
-for img in range(8,9):
+for img in range(11,12):
     # step 1: create images of the LoD models
     raycast_results,mesh,path = RC.raycasting(camera,curr_model,ImageFolder,GNSS,img)
 

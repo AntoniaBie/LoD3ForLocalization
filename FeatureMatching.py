@@ -62,21 +62,21 @@ def get_coordinates(im1,im2,i):
     plt.title("ORB")
     plt.show()
     
-    '''text = "Figure " + str(i) + "Plot Features 2"
-    image2_color = cv2.applyColorMap(image2, cv2.COLORMAP_BONE)
+    text = "Figure " + str(i) + "Plot Features 2"
+    #image2_color = cv2.applyColorMap(image2, cv2.COLORMAP_BONE)
     fig = plt.figure(text)           
-    plt.imshow(image2_color)
+    plt.imshow(image2)
     plt.legend(["matched points"])
     plt.title("ORB")
     plt.plot(koord_pic2[:,1],koord_pic2[:,0],'ro')
     plt.show()
     
     text = "Figure " + str(i) + "Plot Features 1"
-    image1_color = cv2.applyColorMap(image1, cv2.COLORMAP_BONE)
+    #image1_color = cv2.applyColorMap(image1, cv2.COLORMAP_BONE)
     fig = plt.figure(text)           
-    plt.imshow(image1_color)
+    plt.imshow(image1)
     plt.legend(["matched points"])
     plt.title("ORB")
     plt.plot(koord_pic1[:,1],koord_pic1[:,0],'ro')
-    plt.show()'''
+    plt.show()
     return koord_pic1,koord_pic2
