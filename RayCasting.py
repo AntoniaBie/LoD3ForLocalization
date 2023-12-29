@@ -24,7 +24,7 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,i):
     
     if rec_mesh == 'LoD2':
         print('LoD2 model was chosen.')
-        LoD2 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD2.obj", 
+        LoD2 = o3d.io.read_triangle_mesh('./data/Mesh/TUM_LoD2.obj', 
                         enable_post_processing=False, print_progress=True)
          
         mesh = o3d.t.geometry.TriangleMesh.from_legacy(LoD2)
@@ -35,15 +35,15 @@ def raycasting(cam,rec_mesh,image_folder,GNSS,i):
         print('LoD3 model was chosen.')
         # this LoD2 model is here, because a combination of LoD2 and LoD3 was used
         # for the buildings where no LoD3 model was available, a LoD2 model was used instead
-        LoD2 = o3d.io.read_triangle_mesh("./data/Mesh/LoD2_selec_70_72_81_underpass.obj", 
+        LoD2 = o3d.io.read_triangle_mesh('./data/Mesh/LoD2_selec_70_72_81_underpass.obj', 
                         enable_post_processing=False, print_progress=True)
         # only for output and exact coordinate extraction
-        LoD3 = o3d.io.read_triangle_mesh("./data/Mesh/TUM_LoD3.obj", 
+        LoD3 = o3d.io.read_triangle_mesh('./data/Mesh/TUM_LoD3.obj', 
                         enable_post_processing=False, print_progress=True) 
         # for different colors the parts of the building have to be added seperately
-        windows = o3d.io.read_triangle_mesh(r"./data/Mesh/Window.obj")
-        roof = o3d.io.read_triangle_mesh(r"./data/Mesh/RoofSurface.obj")
-        wall = o3d.io.read_triangle_mesh(r"./data/Mesh/WallSurface2.obj")
+        windows = o3d.io.read_triangle_mesh('./data/Mesh/Window.obj')
+        roof = o3d.io.read_triangle_mesh('./data/Mesh/RoofSurface.obj')
+        wall = o3d.io.read_triangle_mesh('./data/Mesh/WallSurface2.obj')
         
         #visualize(windows)
         #visualize(wall)

@@ -17,19 +17,19 @@ method = ['real images','feature images','sobel','canny','mask','mask and sobel'
 image_type = ['real images','segmentation']
 
 #%% settings to be changed by the user
-GNSS = np.loadtxt("./data/GNSS/9_Route3.txt")
+GNSS = np.loadtxt('./data/GNSS/9_Route3.txt')
 chosenMethod = method[0]
 chosenImageType = image_type[0]
 
 curr_model = 'LoD3' #or 'LoD2'
 
-folder_mask = r'D:/Bachelorthesis/9_Route3_seg_buildings'
+folder_mask = './data/Images/Route_3_seg_buildings'
 
 if chosenImageType == 'segmentation':
-    ImageFolder = "D:/Bachelorthesis/9_Route3_seg"
+    ImageFolder = './data/Images/Route_3_seg'
     
 elif chosenImageType == 'real images':
-    ImageFolder = "D:/Bachelorthesis/9_Route3"
+    ImageFolder = './data/Images/Route_3'
     
 else:
     print('Please select the image type to get the images from the right folder.')
@@ -58,7 +58,7 @@ GNSS = DataPrep.data_prep(GNSS, camera)
 points_traj = np.array([0,0,0])
 points_traj = points_traj[:,np.newaxis]
 i = 1
-for img in range(11,12):
+for img in range(1,3):
     # step 1: create images of the LoD models
     raycast_results,mesh,path = RC.raycasting(camera,curr_model,ImageFolder,GNSS,img)
 
