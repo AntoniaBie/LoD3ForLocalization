@@ -5,6 +5,7 @@ Created on Tue Jul  4 16:45:23 2023
 @author: anton
 """
 
+# find features between two different images
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np

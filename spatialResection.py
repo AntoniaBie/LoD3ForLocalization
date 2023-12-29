@@ -5,6 +5,7 @@ Created on Tue Jul 11 15:54:07 2023
 @author: anton
 """
 
+# calculate the trajectory by using spatial resection
 import matplotlib.pyplot as plt
 import numpy as np
 import math

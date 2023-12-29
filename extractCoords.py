@@ -4,6 +4,8 @@ Created on Tue Jul  4 16:24:43 2023
 
 @author: anton
 """
+
+# extract coordinates of the real world based on barycentric coordinates 
 import numpy as np
 
 def main(ans,mesh,coord_LoD,coord_real):

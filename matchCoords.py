@@ -4,6 +4,8 @@ Created on Tue Jul  4 16:35:22 2023
 
 @author: anton
 """
+
+# match the coordinates of two different images to one feature image
 import numpy as np
 import matplotlib.image
 import matplotlib.pyplot as plt
