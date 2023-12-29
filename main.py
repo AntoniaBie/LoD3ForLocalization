@@ -5,9 +5,9 @@ Created on Fri Jun 30 08:38:19 2023
 @author: anton
 """
 import numpy as np
-import RayCasting as RC
-import DataPrep
-import Manager_3DCoords
+import rayCasting
+import dataPrep
+import manager3DCoords
 import matplotlib.pyplot as plt
 
 # ----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ pitch = -0.0849
 yaw = 85.3330
 
 camera = [c_9,width,height,dx_9,dy_9,dz_9,roll,pitch,yaw,pixel_M]
-GNSS = DataPrep.data_prep(GNSS, camera)
+GNSS = dataPrep.main(GNSS, camera)
 
 
 
@@ -60,10 +60,10 @@ points_traj = points_traj[:,np.newaxis]
 i = 1
 for img in range(1,3):
     # step 1: create images of the LoD models
-    raycast_results,mesh,path = RC.raycasting(camera,curr_model,ImageFolder,GNSS,img)
+    raycast_results,mesh,path = rayCasting.main(camera,curr_model,ImageFolder,GNSS,img)
 
     # step 2: get the coordinates and calculate the camera position
-    points_traj, std = Manager_3DCoords.main(camera,GNSS,mesh,ImageFolder,path,folder_mask,raycast_results,points_traj,chosenMethod,img)
+    points_traj, std = manager3DCoords.main(camera,GNSS,mesh,ImageFolder,path,folder_mask,raycast_results,points_traj,chosenMethod,img)
     print("Point " + str(img))
     print('Standard deviation of the current point: ' + str(std[0:3]))
     traj_test = points_traj.T

@@ -20,7 +20,7 @@ def visualize(mesh):
         vis.destroy_window()
         
 
-def raycasting(cam,rec_mesh,image_folder,GNSS,i):
+def main(cam,rec_mesh,image_folder,GNSS,i):
     
     if rec_mesh == 'LoD2':
         print('LoD2 model was chosen.')

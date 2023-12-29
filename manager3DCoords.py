@@ -5,7 +5,7 @@ Created on Tue Jul  4 16:15:05 2023
 @author: anton
 """
 import numpy as np
-import FeatureMatching
+import featureMatching
 import extractCoords
 import os
 import matchCoords
@@ -24,11 +24,11 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,raycast_re
         # extract LoD-model image coordinates
         print("__________________________________________")
         print("Now finding features in the single images (compared with themselves)")
-        coord1_LoD_2D,_ = FeatureMatching.get_coordinates(image_folder_LoD + str(i) + ".jpeg",image_folder_LoD + str(i) + ".jpeg",1000)
+        coord1_LoD_2D,_ = featureMatching.get_coordinates(image_folder_LoD + str(i) + ".jpeg",image_folder_LoD + str(i) + ".jpeg",1000)
         
         # extract real world image coordinates
         list_images = os.listdir(image_folder_real)
-        coord1_real_2D,_ = FeatureMatching.get_coordinates(image_folder_real+"/"+list_images[i],image_folder_real+"/"+list_images[i],1001)
+        coord1_real_2D,_ = featureMatching.get_coordinates(image_folder_real+"/"+list_images[i],image_folder_real+"/"+list_images[i],1001)
         
         if coord1_LoD_2D.size == 1 or coord1_real_2D.size == 1:
             print("No good matches were found, skipping this image-pair")
@@ -67,7 +67,7 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,raycast_re
         cv2.imwrite(path_real, edges_real)
         cv2.imwrite(path_LoD, edges_LoD)  
 
-        coord1_LoD_2D,coord1_real_2D = FeatureMatching.get_coordinates(path_real,path_LoD,1003)
+        coord1_LoD_2D,coord1_real_2D = featureMatching.get_coordinates(path_real,path_LoD,1003)
         
         
         if coord1_LoD_2D.size == 1 or coord1_real_2D.size == 1:
@@ -88,7 +88,7 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,raycast_re
         list_images = os.listdir(image_folder_real)
         path_real = image_folder_real+"/"+list_images[i]
         path_LoD = image_folder_LoD + str(i) + ".jpeg"
-        coord1_LoD_2D,coord1_real_2D = FeatureMatching.get_coordinates(path_real,path_LoD,1003)
+        coord1_LoD_2D,coord1_real_2D = featureMatching.get_coordinates(path_real,path_LoD,1003)
         
         if coord1_LoD_2D.size == 1 or coord1_real_2D.size == 1:
             print("No good matches were found, skipping this image-pair")
@@ -129,7 +129,7 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,raycast_re
         cv2.imwrite(path_real, sobel_real)
         cv2.imwrite(path_LoD, sobely_LoD)  
 
-        coord1_LoD_2D,coord1_real_2D = FeatureMatching.get_coordinates(path_real,path_LoD,1003)
+        coord1_LoD_2D,coord1_real_2D = featureMatching.get_coordinates(path_real,path_LoD,1003)
         
         if coord1_LoD_2D.size == 1 or coord1_real_2D.size == 1:
             print("No good matches were found, skipping this image-pair")
@@ -155,7 +155,7 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,raycast_re
         path_real = './images_mask/image_mask.jpeg'
         matplotlib.image.imsave(path_real, img1)
         
-        coord1_LoD_2D,coord1_real_2D = FeatureMatching.get_coordinates(path_real,image_folder_LoD + str(i) + ".jpeg",1003)
+        coord1_LoD_2D,coord1_real_2D = featureMatching.get_coordinates(path_real,image_folder_LoD + str(i) + ".jpeg",1003)
         
         if coord1_LoD_2D.size == 1 or coord1_real_2D.size == 1:
             print("No good matches were found, skipping this image-pair")
@@ -204,7 +204,7 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,raycast_re
         cv2.imwrite(path_real, sobel_real)
         cv2.imwrite(path_LoD, sobel_LoD)  
         
-        coord1_LoD_2D,coord1_real_2D = FeatureMatching.get_coordinates(path_real,path_LoD,1003)
+        coord1_LoD_2D,coord1_real_2D = featureMatching.get_coordinates(path_real,path_LoD,1003)
         
         if coord1_LoD_2D.size == 1 or coord1_real_2D.size == 1:
             print("No good matches were found, skipping this image-pair")
@@ -248,7 +248,7 @@ def main(cam,GNSS,mesh,image_folder_real,image_folder_LoD,folder_mask,raycast_re
         cv2.imwrite(path_real, canny_real)
         cv2.imwrite(path_LoD, canny_LoD)  
         
-        coord1_LoD_2D,coord1_real_2D = FeatureMatching.get_coordinates(path_real,path_LoD,1003)
+        coord1_LoD_2D,coord1_real_2D = featureMatching.get_coordinates(path_real,path_LoD,1003)
         
         if coord1_LoD_2D.size == 1 or coord1_real_2D.size == 1:
             print("No good matches were found, skipping this image-pair")
